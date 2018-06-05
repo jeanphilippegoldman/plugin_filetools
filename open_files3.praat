@@ -14,6 +14,7 @@ endform
 
 clearinfo
 printline Open files...
+folder$=folder$-"\"-"/"+"/"
 execute setbasename.praat "'folder$'" 'files$'
 
 call loadextensions
@@ -45,19 +46,18 @@ Remove
 procedure openthis .d$ .f$
 nrf=0
 printline openthis:'.d$' '.f$'
-Create Strings as file list... list '.d$'\'.f$'
+Create Strings as file list... list '.d$''.f$'
 Sort
 numberOfFiles = Get number of strings
 printline 'numberOfFiles'
 for ifile to numberOfFiles
   filename$ = Get string... ifile
-  #printline '.d$'\'filename$'
-  if fileReadable("'.d$'\'filename$'")
+  if fileReadable("'.d$''filename$'")
     #printline readable
     call checkextension
     if checkextension.r
-      printline 'openmethod$' '.d$'\'filename$'
-      s'ifile'ID='openmethod$' '.d$'\'filename$'
+      printline 'openmethod$' '.d$''filename$'
+      s'ifile'ID='openmethod$' '.d$''filename$'
       nrf=nrf+1
       nrf2=nrf2+1
     else
@@ -79,9 +79,7 @@ endproc
 procedure checkextension
   .r=0
   .extension$ = right$(filename$,length(filename$)-rindex(filename$,"."))
-  #printline '.extension$'
   .extension$= replace_regex$(.extension$,".","\L&",0)
-  #printline '.extension$'
   select wextID
   .r=Has word... '.extension$'
 endproc

@@ -8,14 +8,13 @@ endform
 
 clearinfo
 #printline Setbasename
-if right$(folder$,1)!="\" and right$(folder$,1)!="/"
-  folder$= folder$ + "/"
-endif
+folder$=folder$-"\"-"/"+"/"
 
 call modifile setbasename.praat "'folder$'" 'files$'
 call modifile open_files3.praat "'folder$'" 'files$'
 call modifile save_files2.praat "'folder$'" ""
 call modifile get_durations.praat "'folder$'" 'files$'
+call modifile resample_files.praat "'folder$'" 'files$'
 
 procedure modifile .script$ .folder$ .files$
 

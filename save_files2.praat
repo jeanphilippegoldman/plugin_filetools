@@ -27,6 +27,7 @@ for i to n
   n'i'$= right$(selected$(i),length(s'i'$)-length(t'i'$)-1)
 endfor
 
+folder$=folder$-"\"-"/"+"/"
 execute setbasename.praat "'folder$'"
 
 for i to n
@@ -34,11 +35,11 @@ for i to n
   thisname$=n'i'$
   thistype$=t'i'$
   if t'i'$="Sound"
-    printline Write to 'save_sounds_in$' file... 'folder$'\'thisname$'.'save_sounds_in$'
-    Write to 'save_sounds_in$' file... 'folder$'\'thisname$'.'save_sounds_in$'
+    printline Write to 'save_sounds_in$' file... 'folder$''thisname$'.'save_sounds_in$'
+    Write to 'save_sounds_in$' file... 'folder$''thisname$'.'save_sounds_in$'
   else
-    printline Write to 'save_praat_files_in$' file... 'folder$'\'thisname$'.'thistype$'
-    Write to 'save_praat_files_in$' file... 'folder$'\'thisname$'.'thistype$'
+    printline Write to 'save_praat_files_in$' file... 'folder$''thisname$'.'thistype$'
+    Write to 'save_praat_files_in$' file... 'folder$''thisname$'.'thistype$'
   endif
 endfor
 

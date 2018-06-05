@@ -9,16 +9,17 @@ endform
 
 clearinfo
 printline Get durations...
+folder$=folder$-"\"-"/"+"/"
 execute setbasename.praat "'folder$'" 'files$'
 
-Create Strings as file list... list 'folder$'\'files$'
+Create Strings as file list... list 'folder$''files$'
 numberOfFiles = Get number of strings
 
 total_duration = 0
 
 for ifile to numberOfFiles
   filename$ = Get string... ifile
-  Read from file... 'folder$'/'filename$'
+  Read from file... 'folder$''filename$'
   duration = Get total duration
   total_duration = total_duration + duration
   printline 'duration:3''tab$''filename$' 
