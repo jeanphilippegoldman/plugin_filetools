@@ -27,5 +27,9 @@ select Strings list
 endfor
 Remove
 printline Total duration: 'total_duration:3'
+if numberOfFiles != 0
+  mean_duration = total_duration / numberOfFiles
+  printline Mean duration:  'mean_duration:3'
+endif
 
 
