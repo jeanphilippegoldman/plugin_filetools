@@ -6,17 +6,12 @@ form Get Durations of all audio files
   comment Folder with sound files:
   text Folder 
   word Sound_file_extension wav
-#  text Files 
 endform
 
-#folder$
-#sound_file_extension$
-files$ = ""
+folder$= folder$-"\"-"/"
+runScript: "setbasename.praat", folder$, ""
 
-folder$= folder$-"\"-"/"+"/"
-runScript: "setbasename.praat", folder$, files$
-
-fileList = Create Strings as file list: "list", folder$ + files$
+fileList = Create Strings as file list: "list", folder$ + "/*" + sound_file_extension$
 numberOfFiles = Get number of strings
 
 total_duration = 0
