@@ -1,0 +1,109 @@
+# Search for folders in a directory hierarchy. It uses the Depth-first Search algorithm
+#
+# Written by Rolando Munoz A. (13 Sep 2017)
+#
+# This script is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# A copy of the GNU General Public License is available at
+# <http://www.gnu.org/licenses/>.
+#
+
+#! ~~~params
+#! selection:
+#!   in:
+#!     - path$: the root file
+#!     - name$: the name pattern of the files
+#!   out:
+#!     - strings: 1
+#! ~~~
+#! Search for files in a directory hierarchy. It uses the Depth-first Search algorithm
+#!
+procedure findFiles: .root_directory$, .name$
+  @findDirectories: .root_directory$
+  .return = Create Strings as tokens: "", " ,"
+  Rename: "fileList"
+  .tb = findDirectories.return
+  for .i to Object_'.tb'.nrow
+    .directory$ = object$[.tb, .i, "path"]
+    .string = Create Strings as file list: "fileList", .root_directory$ + "/" + .directory$ + "/" + .name$
+    .n = Get number of strings
+    for .j to .n
+      .filename$ = object$[.string, .j]
+      selectObject: .return
+      Insert string: 0, .directory$ + "/" + .filename$
+    endfor
+    removeObject: .string
+  endfor
+  removeObject: .tb
+  selectObject: .return
+endproc
+
+#! ~~~params
+#! selection:
+#!   in:
+#!     - directory$: the root file
+#!   out:
+#!     - table: 1
+#! ~~~
+#! Search for folders in a directory hierarchy. It uses the Depth-first Search algorithm
+#!
+procedure findDirectories: .directory$
+  # Create a table
+  .return = Create Table with column names: "directoryList", 0, "id parent_id i_dir n_dir path"
+  @_findDirectoriesCall: .return, 0, .directory$, 1
+  selectObject: .return
+  Remove column: "id"
+  Remove column: "parent_id"
+  Remove column: "i_dir"
+  Remove column: "n_dir"
+  # Remove the root directory
+  Formula: "path", ~replace$(self$["path"], .directory$, ".", 1)
+endproc
+
+#! ~~~params
+#! selection:
+#!   in:
+#!     - table: 
+#!     - parent_id: 
+#!     - directory$: 
+#!   out:
+#!     - strings: 1
+#! ~~~
+#! Internal procedure
+#!
+procedure _findDirectoriesCall: .table, .parent_id, .directory$
+  .id = Create Strings as directory list: "directoryList", .directory$ + "/*"
+  .max = Get number of strings
+
+  selectObject: .table
+  Append row
+  Set numeric value: Object_'.table'.nrow, "id", .id
+  Set numeric value: Object_'.table'.nrow, "parent_id", .parent_id
+  Set numeric value: Object_'.table'.nrow, "i_dir", 1
+  Set numeric value: Object_'.table'.nrow, "n_dir", .max
+  Set string value: Object_'.table'.nrow, "path", .directory$
+
+  selectObject: .id
+  for .i to .max
+    .folder_name$ = object$[.id, .i]
+    @_findDirectoriesCall: .table, .id, .directory$ + "/" + .folder_name$
+  endfor
+  removeObject: .id
+  selectObject: .table
+  # Parent id
+  ## Get parent id
+  .row = Search column: "id", string$(.id)
+  .id = object[.table, .row, "parent_id"]
+  
+  if .id > 0
+    ## Increase counter 'i' of the parent id
+    .row = Search column: "id", string$(.id)
+    .i = object[.table, .row, "i_dir"]
+    Set numeric value: .row, "i_dir", .i+1
+    .max = object[.table, .row, "n_dir"]
+    .directory$ = object$[.table, .row, "path"]
+  endif
+endproc
