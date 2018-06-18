@@ -8,7 +8,7 @@ form Get Durations of all audio files
 endform
 
 folder$= folder$-"\"-"/"
-runScript: "setbasename.praat", folder$, ""
+# runScript: "setbasename.praat", folder$, ""
 
 fileList = Create Strings as file list: "list", folder$ + "/*" + sound_file_extension$
 number_of_files = Get number of strings
