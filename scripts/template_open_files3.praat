@@ -4,9 +4,9 @@
 include ../procedures/list_recursive_path.proc
 
 form Open files...
-comment Folder with sound files:
-text Folder 
-word File_extension wav
+comment Folder with files:
+text Folder <folder>
+word File_extension <extension>
 boolean Recursive_search 0
 optionmenu Open_method 1
   option Read from file...
@@ -22,7 +22,6 @@ open_command$[4] = "Read Table from comma-separated file..."
   
 
 folder$=folder$-"\"-"/"
-runScript: "../setbasename.praat", folder$, ""
 
 checkextension = 0
 if file_extension$ == ""

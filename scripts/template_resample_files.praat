@@ -8,8 +8,8 @@ form Modify sample frequency
     option 44100
     option 48000
 comment Folder with sound files:
-text Folder 
-word File_extension wav
+text Folder <folder>
+word File_extension <file_extension>
 endform
 
 writeInfoLine: "Resample files..."

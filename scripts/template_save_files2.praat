@@ -3,17 +3,17 @@
 
 form Save selected object to files...
 comment Folder
-text Folder 
+text Folder <folder>
 optionmenu save_sounds_in 1
-	option WAV
-	option AIFF
+  option WAV
+  option AIFF
 optionmenu save_praat_files_in 1
-	option text
-	option short_text
-	option binary
-	option table
-	option tab-separated file
-	option headerless spreadsheet
+  option text
+  option short_text
+  option binary
+  option table
+  option tab-separated file
+  option headerless spreadsheet
 endform
 
 

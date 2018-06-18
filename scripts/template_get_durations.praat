@@ -3,8 +3,8 @@
 
 form Get Durations of all audio files
   comment Folder with sound files:
-  text Folder 
-  word Sound_file_extension wav
+  text Folder <folder>
+  word Sound_file_extension <audio_extension>
 endform
 
 folder$= folder$-"\"-"/"
