@@ -1,0 +1,4 @@
+folder: /home/user/corpus
+save_in: /home/user/corpus
+file_extension: 
+audio_extension: wav

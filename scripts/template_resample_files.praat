@@ -1,5 +1,6 @@
 # author: jeanphilippegoldman@gmail.com
 # Description: Modify sample frequency of audio files in a folder
+include ../procedures/config.proc
 
 form Modify sample frequency
   optionmenu sampling_frequency 1
@@ -9,12 +10,25 @@ form Modify sample frequency
     option 48000
 comment Folder with sound files:
 text Folder <folder>
-word File_extension <file_extension>
+word File_extension <audio_extension>
 endform
+
+# Save preferences
+## Save fields in preferences.txt
+@config.read: "../preferences/preferences.txt"
+@config.set: "folder", folder$
+@config.set: "audio_extension", file_extension$
+@config.save
+
+## Save fields
+@config.read: "../preferences/preferences.txt"
+script$ = readFile$("template_resample_files.praat")
+script$ = replace$(script$, "<folder>", config.read.return$["folder"], 1)
+script$ = replace$(script$, "<audio_extension>", config.read.return$["file_extension"], 1)
+writeFile: "resample_files.praat", script$
 
 writeInfoLine: "Resample files..."
 folder$=folder$-"\"-"/"
-#execute setbasename.praat "'folder$'" 'files$'
 
 sampling_frequency = number(sampling_frequency$)
 
