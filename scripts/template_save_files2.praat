@@ -1,21 +1,36 @@
 # Save multiple files
 # author: jeanphilippegoldman@gmail.com
+include ../procedures/config.proc
 
 form Save selected object to files...
-comment Folder
-text Folder 
+comment Save objects in folder:
+text Folder <save_in>
 optionmenu save_sounds_in 1
-	option WAV
-	option AIFF
+  option WAV
+  option AIFF
 optionmenu save_praat_files_in 1
-	option text
-	option short_text
-	option binary
-	option table
-	option tab-separated file
-	option headerless spreadsheet
+  option text
+  option short_text
+  option binary
+  option table
+  option tab-separated file
+  option headerless spreadsheet
 endform
 
+n=numberOfSelected()
+objects# = selected# ()
+
+# Save preferences
+## Save fields in preferences.txt
+@config.read: "../preferences/preferences.txt"
+@config.set: "save_in", folder$
+@config.save
+
+## Save fields
+@config.read: "../preferences/preferences.txt"
+script$ = readFile$("template_save_files2.praat")
+script$ = replace$(script$, "<save_in>", config.read.return$["folder"], 1)
+writeFile: "save_files2.praat", script$
 
 audio_extension$[1] = "wav"
 audio_extension$[2] = "aiff"
@@ -29,9 +44,6 @@ save_praat_files_in$[6] = "headerless spreadsheet"
 
 
 writeInfoLine: "Save selected object to files..."
-
-n=numberOfSelected()
-objects# = selected# ()
 
 for i to size(objects#)
   selectObject: objects#[i]

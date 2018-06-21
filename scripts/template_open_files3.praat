@@ -1,12 +1,12 @@
 # Open files from a folder (and subfolders)
 # author: jeanphilippegoldman@gmail.com
-
 include ../procedures/list_recursive_path.proc
+include ../procedures/config.proc
 
 form Open files...
-comment Folder with sound files:
-text Folder 
-word File_extension wav
+comment Folder with files:
+text Folder <folder>
+word File_extension <file_extension>
 boolean Recursive_search 0
 optionmenu Open_method 1
   option Read from file...
@@ -15,6 +15,20 @@ optionmenu Open_method 1
   option Read Table from comma-separated file...
 endform
 
+# Save preferences
+## Save fields in preferences.txt
+@config.read: "../preferences/preferences.txt"
+@config.set: "folder", folder$
+@config.set: "file_extension", file_extension$
+@config.save
+
+## Save script
+@config.read: "../preferences/preferences.txt"
+script$ = readFile$("template_open_files3.praat")
+script$ = replace$(script$, "<folder>", config.read.return$["folder"], 1)
+script$ = replace$(script$, "<file_extension>", config.read.return$["file_extension"], 1)
+writeFile: "open_files3.praat", script$
+
 open_command$[1] = "Read from file..."
 open_command$[2] = "Read long sound file..."
 open_command$[3] = "Read Table from tab-separated file..."
@@ -22,7 +36,6 @@ open_command$[4] = "Read Table from comma-separated file..."
   
 
 folder$=folder$-"\"-"/"
-runScript: "../setbasename.praat", folder$, ""
 
 checkextension = 0
 if file_extension$ == ""

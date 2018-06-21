@@ -1,0 +1,29 @@
+# written by Rolando Munoz (2018-05-14)
+# Description: a set of procedures to read and modify preference files
+
+procedure config.read: .file$
+  .return$ = readFile$(.file$)
+  .strings = Read Strings from raw text file: config.read.file$
+  .n = Get number of strings
+  for .i to .n
+    .line$ = object$[.strings, .i]
+    .fieldName$ = replace_regex$(.line$, ": .*", "",1)
+    .fieldContent$ = replace_regex$(.line$, ".*: ", "", 1) 
+    .return$[.fieldName$] = .fieldContent$
+    .return[.fieldName$] = number(.fieldContent$)
+  endfor
+  removeObject: .strings
+endproc
+
+procedure config.save
+  writeFile: config.read.file$, config.read.return$ 
+endproc
+
+procedure config.set: .fieldName$, .replace$
+  .fieldName$ = replace$(.fieldName$, ".", "\.", 0); From regex to raw text
+  .replace$ = replace$(.replace$, "\", "\\", 0); From regex to raw text
+  .replace$ = replace$(.replace$, "&", "\&", 0); From regex to raw text
+
+  config.read.return$ = replace_regex$(config.read.return$, "(\n|^)('.fieldName$': )(.*)(\n|$)", "\1\2'.replace$'\4", 1) ;Set field value
+  .return$ = config.read.return$
+endproc
