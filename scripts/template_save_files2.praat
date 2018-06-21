@@ -58,8 +58,10 @@ for i to size(objects#)
 
   save_command$ = "Save as " + command_type$ + " file..."
 
-  appendInfoLine: save_command$
+  appendInfoLine: save_command$ + tab$ + file_fullpath$
   do(save_command$, file_fullpath$)
 endfor
+
+appendInfoLine: size(objects#), " file(s) in ", folder$
 
 selectObject: objects#
