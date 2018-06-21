@@ -38,7 +38,7 @@ open_command$[4] = "Read Table from comma-separated file..."
 folder$=folder$-"\"-"/"
 
 checkextension = 0
-if file_extension$ == ""
+if file_extension$ == "" or file_extension$ == "*"
   extension_list$ = newline$ + readFile$("../preferences/extensions.txt")
   checkextension = 1
 else
