@@ -33,12 +33,12 @@ open_command$[1] = "Read from file..."
 open_command$[2] = "Read long sound file..."
 open_command$[3] = "Read Table from tab-separated file..."
 open_command$[4] = "Read Table from comma-separated file..."
-  
 
 folder$=folder$-"\"-"/"
+file_extension$ = if file_extension$ == "*" then "" else file_extension$ fi 
 
 checkextension = 0
-if file_extension$ == "" or file_extension$ == "*"
+if file_extension$ == ""
   extension_list$ = newline$ + readFile$("../preferences/extensions.txt")
   checkextension = 1
 else
