@@ -8,8 +8,6 @@ form Get Durations of all audio files
   word Sound_file_extension <audio_extension>
 endform
 
-@config.read: "../preferences/preferences.txt"
-
 folder$= folder$-"\"-"/"
 
 # Save preferences
