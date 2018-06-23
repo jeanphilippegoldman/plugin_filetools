@@ -1,5 +1,12 @@
 # author: jeanphilippegoldman@gmail.com
 include procedures/config.proc
+
+if praatVersion < 6040
+  appendInfoLine: "Plug-in name: filetools"
+  appendInfoLine: "Warning: This plug-in only works on Praat version 6.0.40 or later. Please, get a more recent version of Praat."
+  appendInfoLine: "Praat website: http://www.fon.hum.uva.nl/praat/"
+endif
+
 @config.read: "preferences/preferences.txt"
 
 open_files3$ = readFile$("scripts/template_open_files3.praat")
