@@ -9,6 +9,8 @@ form Get Durations of all audio files
 endform
 
 folder$= folder$-"\"-"/"
+files$ = if sound_file_extension$ == "" or sound_file_extension$ == "*" then "*" else "*." + sound_file_extension$ fi 
+
 
 # Save preferences
 ## Save fields in preferences.txt
@@ -24,7 +26,7 @@ script$ = replace$(script$, "<folder>", config.read.return$["folder"], 1)
 script$ = replace$(script$, "<audio_extension>", config.read.return$["audio_extension"], 1)
 writeFile: "get_durations.praat", script$
 
-fileList = Create Strings as file list: "list", folder$ + "/*" + sound_file_extension$
+fileList = Create Strings as file list: "list", folder$ + "/" + files$
 number_of_files = Get number of strings
 
 total_duration = 0

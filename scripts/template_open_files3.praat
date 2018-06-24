@@ -35,7 +35,8 @@ open_command$[3] = "Read Table from tab-separated file..."
 open_command$[4] = "Read Table from comma-separated file..."
 
 folder$=folder$-"\"-"/"
-file_extension$ = if file_extension$ == "*" then "" else file_extension$ fi 
+
+files$ = if file_extension$ == "" or file_extension$ == "*" then "*" else "*." + file_extension$ fi 
 
 checkextension = 0
 if file_extension$ == ""
@@ -47,10 +48,10 @@ endif
 
 # Create file_list
 if recursive_search
-  @findFiles: folder$, "*" + file_extension$
+  @findFiles: folder$, files$
   file_list = findFiles.return
 else
-  file_list = Create Strings as file list: "fileList", folder$ + "/*" + file_extension$
+  file_list = Create Strings as file list: "fileList", folder$ + "/" + files$
 endif
 Sort
 number_of_files = Get number of strings

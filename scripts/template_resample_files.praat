@@ -10,14 +10,14 @@ form Modify sample frequency
     option 48000
 comment Folder with sound files:
 text Folder <folder>
-word File_extension <audio_extension>
+word Sound_file_extension <audio_extension>
 endform
 
 # Save preferences
 ## Save fields in preferences.txt
 @config.read: "../preferences/preferences.txt"
 @config.set: "folder", folder$
-@config.set: "audio_extension", file_extension$
+@config.set: "audio_extension", sound_file_extension$
 @config.save
 
 ## Save fields
@@ -30,9 +30,11 @@ writeFile: "resample_files.praat", script$
 writeInfoLine: "Resample files..."
 folder$=folder$-"\"-"/"
 
+files$ = if sound_file_extension$ == "" or sound_file_extension$ == "*" then "*" else "*." + sound_file_extension$ fi 
+
 sampling_frequency = number(sampling_frequency$)
 
-file_list = Create Strings as file list: "list", folder$ + "/*." + file_extension$
+file_list = Create Strings as file list: "list", folder$ + "/" + files$
 numberOfFiles = Get number of strings
 
 appendInfoLine: numberOfFiles, " files"
