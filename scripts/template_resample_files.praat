@@ -1,9 +1,10 @@
 # author: jeanphilippegoldman@gmail.com
 # Description: Modify sample frequency of audio files in a folder
+include ../procedures/list_recursive_path.proc
 include ../procedures/config.proc
 
 form Modify sample frequency
-  optionmenu sampling_frequency 1
+  optionmenu Sampling_frequency 1
     option 16000
     option 22050
     option 44100
@@ -11,6 +12,7 @@ form Modify sample frequency
 comment Folder with sound files:
 text Folder <folder>
 word Sound_file_extension <audio_extension>
+boolean Recursive_search 0
 endform
 
 # Save preferences
@@ -34,12 +36,19 @@ files$ = if sound_file_extension$ == "" or sound_file_extension$ == "*" then "*"
 
 sampling_frequency = number(sampling_frequency$)
 
-file_list = Create Strings as file list: "list", folder$ + "/" + files$
-numberOfFiles = Get number of strings
+# Create file_list
+if recursive_search
+  @findFiles: folder$, files$
+  file_list = findFiles.return
+else
+  file_list = Create Strings as file list: "fileList", folder$ + "/" + files$
+endif
+Sort
+number_of_files = Get number of strings
 
-appendInfoLine: numberOfFiles, " files"
+appendInfoLine: number_of_files, " files"
 
-for ifile to numberOfFiles
+for ifile to number_of_files
   filename$ = object$[file_list, ifile]
   appendInfoLine: ifile, tab$, filename$
   sound = Read from file: folder$ + "/" + filename$
