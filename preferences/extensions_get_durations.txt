@@ -1,0 +1,9 @@
+wav
+aiff
+mp3
+textgrid
+pitch
+intensity
+formant
+spectrogram
+pitchtier
