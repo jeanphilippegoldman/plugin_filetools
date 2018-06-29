@@ -1,6 +1,7 @@
 # Open files from a folder (and subfolders)
 # author: jeanphilippegoldman@gmail.com
 include ../procedures/list_recursive_path.proc
+include ../procedures/check_extension.proc
 include ../procedures/config.proc
 
 form Open files...
@@ -36,26 +37,27 @@ open_command$[4] = "Read Table from comma-separated file..."
 
 folder$=folder$-"\"-"/"
 
+# List all files
 files$ = if file_extension$ == "" or file_extension$ == "*" then "*" else "*." + file_extension$ fi 
 
-checkextension = 0
-if file_extension$ == ""
-  extension_list$ = newline$ + readFile$("../preferences/extensions.txt")
-  checkextension = 1
-else
-  file_extension$ = ".'file_extension$'"
-endif
-
-# Create file_list
-if recursive_search
-  @findFiles: folder$, files$
-  file_list = findFiles.return
-else
-  file_list = Create Strings as file list: "fileList", folder$ + "/" + files$
-endif
-Sort
+@createStringAsFileList: "fileList",  folder$ + "/" + files$, recursive_search
+file_list = createStringAsFileList.return
 number_of_files = Get number of strings
-counter = 0
+
+# Get only valid extensions
+check_extension = if file_extension$ == "" or file_extension$ == "*" then 1 else 0 fi 
+if check_extension
+  valid_extensions$ = readFile$("../preferences/extensions.txt")
+  for ifile to number_of_files
+    filename$ = object$[file_list, ifile]
+    @checkExtension: filename$, valid_extensions$
+    if not checkExtension.return
+      Remove string: ifile
+      ifile -=1
+      number_of_files -= 1
+    endif
+  endfor
+endif
 
 # Display in the Info window
 clearinfo
@@ -64,24 +66,14 @@ appendInfoLine: "Number of files: ", number_of_files
 
 # Open each object
 for i to number_of_files
-  open_file = 1
   file$ = object$[file_list, i]
   file_path$ = folder$ + "/" + file$
-  
-  if checkextension
-    extension$ = replace_regex$(file_path$, "(.*\.)(.*)", "\L\2", 0)
-    open_file = index_regex(extension_list$, "\n'extension$'\n")
-    message$ = "extension not supported"
-  endif
-  
-  if open_file
-    message$ = open_command$[open_method] + tab$ + file_path$
-    object = do(open_command$[open_method], file_path$)
-    counter+= 1
-  endif  
+    
+  message$ = open_command$[open_method] + tab$ + file_path$
+  object = do(open_command$[open_method], file_path$)
   appendInfoLine: message$
 endfor
 
-appendInfoLine: counter, " file(s) in ", folder$
+appendInfoLine: number_of_files, " file(s) in ", folder$
 
 removeObject: file_list
