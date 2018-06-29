@@ -12,8 +12,6 @@ form Get Durations of all audio files
 endform
 
 folder$= folder$-"\"-"/"
-files$ = if sound_file_extension$ == "" or sound_file_extension$ == "*" then "*" else "*." + sound_file_extension$ fi 
-
 
 # Save preferences
 ## Save fields in preferences.txt
@@ -50,25 +48,30 @@ if check_extension
   endfor
 endif
 
-number_of_files = Get number of strings
+# Compute
 total_duration = 0
 
-writeInfoLine: "Get durations..."
-
+info$ = ""
 for ifile to number_of_files
   sd$ = object$[file_list, ifile]
   sd_path$ = folder$ + "/" + sd$
   sd = Read from file: sd_path$
   duration = object[sd].xmax
   total_duration += duration
-  appendInfoLine: fixed$(duration, 3), tab$, sd$
+  info$ = info$ + fixed$(duration, 3)+ tab$+ sd_path$ + newline$
   removeObject: sd
 endfor
 
 removeObject: file_list
-appendInfoLine: "Total duration: ", fixed$(total_duration, 3)
 
+# Print results
+writeInfoLine: "Get durations..."
+appendInfoLine: "Number of files: ", number_of_files
+appendInfoLine: "Folder: ", folder$
+appendInfoLine: "Total duration: ", fixed$(total_duration, 3)
 if number_of_files != 0
   mean_duration = total_duration / number_of_files
   appendInfoLine: "Mean duration: ", fixed$(mean_duration, 3)
 endif
+appendInfoLine: ""
+appendInfoLine: info$

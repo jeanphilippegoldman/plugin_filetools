@@ -11,10 +11,10 @@ form Modify sample frequency
     option 22050
     option 44100
     option 48000
-comment Folder with sound files:
-text Folder <folder>
-word Sound_file_extension <audio_extension>
-boolean Recursive_search 0
+  comment Folder with sound files:
+  text Folder <folder>
+  word Sound_file_extension <audio_extension>
+  boolean Recursive_search 0
 endform
 
 # Save preferences
@@ -31,7 +31,6 @@ script$ = replace$(script$, "<folder>", config.read.return$["folder"], 1)
 script$ = replace$(script$, "<audio_extension>", config.read.return$["file_extension"], 1)
 writeFile: "resample_files.praat", script$
 
-writeInfoLine: "Resample files..."
 folder$=folder$-"\"-"/"
 
 sampling_frequency = number(sampling_frequency$)
@@ -57,16 +56,14 @@ if check_extension
   endfor
 endif
 
-number_of_files = Get number of strings
-
-appendInfoLine: number_of_files, " files"
-
+#compute
+info$ = ""
 for ifile to number_of_files
   open_file = 1
   file$ = object$[file_list, ifile]
   file_path$ = folder$ + "/" + file$
 
-  appendInfoLine: ifile, tab$, file$
+  info$ = info$ + string$(ifile) + tab$ + file_path$ + newline$
   sound = Read from file: file_path$
   sound$ = selected$("Sound")
   
@@ -76,3 +73,10 @@ for ifile to number_of_files
   removeObject: sound, sound_resampled
 endfor
 removeObject: file_list
+
+# Print results
+writeInfoLine: "Resample files..."
+appendInfoLine: "Number of files: ", number_of_files
+appendInfoLine: "Folder: ", folder$
+appendInfoLine: ""
+appendInfoLine: info$

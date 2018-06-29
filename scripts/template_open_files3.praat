@@ -44,6 +44,7 @@ files$ = if file_extension$ == "" or file_extension$ == "*" then "*" else "*." +
 file_list = createStringAsFileList.return
 number_of_files = Get number of strings
 
+info$ = ""
 # Get only valid extensions
 check_extension = if file_extension$ == "" or file_extension$ == "*" then 1 else 0 fi 
 if check_extension
@@ -59,21 +60,21 @@ if check_extension
   endfor
 endif
 
-# Display in the Info window
-clearinfo
-writeInfoLine: "Open files..."
-appendInfoLine: "Number of files: ", number_of_files
 
-# Open each object
+# Compute
 for i to number_of_files
   file$ = object$[file_list, i]
   file_path$ = folder$ + "/" + file$
     
-  message$ = open_command$[open_method] + tab$ + file_path$
+  info$ = info$ + open_command$[open_method] + tab$ + file_path$ + newline$
   object = do(open_command$[open_method], file_path$)
-  appendInfoLine: message$
 endfor
 
-appendInfoLine: number_of_files, " file(s) in ", folder$
+# Print results
+writeInfoLine: "Open files..."
+appendInfoLine: "Number of files: ", number_of_files
+appendInfoLine: "Folder: ", folder$
+appendInfoLine: ""
+appendInfoLine: info$
 
 removeObject: file_list
