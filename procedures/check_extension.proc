@@ -1,0 +1,8 @@
+# Written by Rolando Munoz A. (13 Sep 2018)
+
+procedure checkExtension: .file_path$, .extension_list$
+  .extension_list$ = newline$ + .extension_list$
+  .extension$ = replace_regex$(.file_path$, "(.*\.)(.*)", "\L\2", 0)
+  .open_file = index_regex(.extension_list$, "\n'.extension$'\n")
+  .return = if .open_file then 1 else 0 fi
+endproc
