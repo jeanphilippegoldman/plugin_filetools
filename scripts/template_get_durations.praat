@@ -1,6 +1,7 @@
 # author: jeanphilippegoldman@gmail.com
 # Description: get durations of audio files in a folder
 include ../procedures/list_recursive_path.proc
+include ../procedures/check_extension.proc
 include ../procedures/config.proc
 
 form Get Durations of all audio files
@@ -28,16 +29,28 @@ script$ = replace$(script$, "<folder>", config.read.return$["folder"], 1)
 script$ = replace$(script$, "<audio_extension>", config.read.return$["audio_extension"], 1)
 writeFile: "get_durations.praat", script$
 
-# Create file_list
-if recursive_search
-  @findFiles: folder$, files$
-  file_list = findFiles.return
-else
-  file_list = Create Strings as file list: "fileList", folder$ + "/" + files$
-endif
-Sort
+# List all files
+files$ = if sound_file_extension$ == "" or sound_file_extension$ == "*" then "*" else "*." + sound_file_extension$ fi 
+@createStringAsFileList: "fileList",  folder$ + "/" + files$, recursive_search
+file_list = createStringAsFileList.return
 number_of_files = Get number of strings
 
+# Get only valid extensions
+check_extension = if sound_file_extension$ == "" or sound_file_extension$ == "*" then 1 else 0 fi
+if check_extension
+  valid_extensions$ = readFile$("../preferences/extensions_get_durations.txt")
+  for ifile to number_of_files
+    filename$ = object$[file_list, ifile]
+    @checkExtension: filename$, valid_extensions$
+    if not checkExtension.return
+      Remove string: ifile
+      ifile -=1
+      number_of_files -= 1
+    endif
+  endfor
+endif
+
+number_of_files = Get number of strings
 total_duration = 0
 
 writeInfoLine: "Get durations..."

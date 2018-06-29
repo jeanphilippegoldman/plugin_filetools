@@ -1,7 +1,9 @@
 # author: jeanphilippegoldman@gmail.com
 # Description: Modify sample frequency of audio files in a folder
 include ../procedures/list_recursive_path.proc
+include ../procedures/check_extension.proc
 include ../procedures/config.proc
+
 
 form Modify sample frequency
   optionmenu Sampling_frequency 1
@@ -32,31 +34,45 @@ writeFile: "resample_files.praat", script$
 writeInfoLine: "Resample files..."
 folder$=folder$-"\"-"/"
 
-files$ = if sound_file_extension$ == "" or sound_file_extension$ == "*" then "*" else "*." + sound_file_extension$ fi 
-
 sampling_frequency = number(sampling_frequency$)
 
-# Create file_list
-if recursive_search
-  @findFiles: folder$, files$
-  file_list = findFiles.return
-else
-  file_list = Create Strings as file list: "fileList", folder$ + "/" + files$
+# List all files
+files$ = if sound_file_extension$ == "" or sound_file_extension$ == "*" then "*" else "*." + sound_file_extension$ fi 
+@createStringAsFileList: "fileList",  folder$ + "/" + files$, recursive_search
+file_list = createStringAsFileList.return
+number_of_files = Get number of strings
+
+# Get only valid extensions
+check_extension = if sound_file_extension$ == "" or sound_file_extension$ == "*" then 1 else 0 fi
+if check_extension
+  valid_extensions$ = readFile$("../preferences/extensions_audio.txt")
+  for ifile to number_of_files
+    filename$ = object$[file_list, ifile]
+    @checkExtension: filename$, valid_extensions$
+    if not checkExtension.return
+      Remove string: ifile
+      ifile -=1
+      number_of_files -= 1
+    endif
+  endfor
 endif
-Sort
+
 number_of_files = Get number of strings
 
 appendInfoLine: number_of_files, " files"
 
 for ifile to number_of_files
-  filename$ = object$[file_list, ifile]
-  appendInfoLine: ifile, tab$, filename$
-  sound = Read from file: folder$ + "/" + filename$
+  open_file = 1
+  file$ = object$[file_list, ifile]
+  file_path$ = folder$ + "/" + file$
+
+  appendInfoLine: ifile, tab$, file$
+  sound = Read from file: file_path$
   sound$ = selected$("Sound")
   
   sound_resampled = Resample: sampling_frequency, 50
-  Rename: filename$
-  Save as WAV file: folder$ + "/" + filename$
+  Rename: file$
+  Save as WAV file: folder$ + "/" + file$
   removeObject: sound, sound_resampled
 endfor
 removeObject: file_list
