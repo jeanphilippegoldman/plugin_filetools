@@ -20,6 +20,8 @@ endform
 n=numberOfSelected()
 objects# = selected# ()
 
+# Check if two or more objects share the same name
+
 # Save preferences
 ## Save fields in preferences.txt
 @config.read: "../preferences/preferences.txt"
@@ -42,7 +44,6 @@ save_praat_files_in$[4] = "table"
 save_praat_files_in$[5] = "tab-separated file"
 save_praat_files_in$[6] = "headerless spreadsheet"
 
-
 writeInfoLine: "Save selected object to files..."
 
 for i to size(objects#)
@@ -55,9 +56,29 @@ for i to size(objects#)
   
   filename$ = object_name$ + "." + extension$
   file_fullpath$ = folder$ + "/" + filename$
-
+  
+  # Check if the filename already exists
+  if fileReadable(file_fullpath$)
+    beginPause: "Warning"
+      comment: "The file ""'filename$'"" already exists in the specified folder."
+      comment: "What do you want to do?"
+    clicked = endPause: "Cancel", "Overwrite", "Serialize", 1
+    if clicked = 3
+      # Serialize
+      serial_number = 0
+      repeat 
+        serial_number += 1
+        serial_number$ = if serial_number < 10 then "00" else "0" fi + string$(serial_number)
+        filename$ = object_name$ + "_" + serial_number$ + "." + extension$
+        file_fullpath$ = folder$ + "/" + filename$
+      until not fileReadable(file_fullpath$)
+    elsif clicked = 1
+      exitScript()
+    endif
+  endif
+  
   save_command$ = "Save as " + command_type$ + " file..."
-
+  
   appendInfoLine: save_command$ + tab$ + file_fullpath$
   do(save_command$, file_fullpath$)
 endfor
